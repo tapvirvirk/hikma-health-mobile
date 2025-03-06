@@ -13,14 +13,14 @@ import com.facebook.react.config.ReactFeatureFlags
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.facebook.react.flipper.ReactNativeFlipper
+import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
  
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 
 import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
-import com.facebook.react.bridge.JSIModulePackage;
+//import com.facebook.react.bridge.JSIModulePackage;
 
 import com.microsoft.codepush.react.CodePush
 
@@ -30,9 +30,10 @@ class MainApplication : Application(), ReactApplication {
         this,
         object : DefaultReactNativeHost(this) {
           override fun getPackages(): List<ReactPackage> {
-            // Packages that cannot be autolinked yet can be added manually here, for example:
-            // packages.add(new MyReactNativePackage());
-            return PackageList(this).packages
+            // Packages that cannot be autolinked yet can be added manually here
+            val packages = PackageList(this).packages.toMutableList()
+            packages.add(WatermelonDBJSIPackage())
+            return packages
           }
  
           override fun getJSMainModuleName(): String = ".expo/.virtual-metro-entry"
@@ -42,9 +43,9 @@ class MainApplication : Application(), ReactApplication {
           override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
           override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
 
-          override fun getJSIModulePackage(): JSIModulePackage {
-            return WatermelonDBJSIPackage();
-          }
+          //          override fun getJSIModulePackage(): JSIModulePackage {
+//            return WatermelonDBJSIPackage();
+//          }
 
           // Override the getJSBundleFile method to use CodePush
           override fun getJSBundleFile(): String {
@@ -54,20 +55,14 @@ class MainApplication : Application(), ReactApplication {
   )
  
   override val reactHost: ReactHost
-    get() = getDefaultReactHost(this.applicationContext, reactNativeHost)
+    get() = getDefaultReactHost(applicationContext, reactNativeHost)
  
   override fun onCreate() {
     super.onCreate()
-    SoLoader.init(this, false)
-    if (!BuildConfig.REACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS) {
-      ReactFeatureFlags.unstable_useRuntimeSchedulerAlways = false
-    }
+    SoLoader.init(this, OpenSourceMergedSoMapping)
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
-    }
-    if (BuildConfig.DEBUG) {
-      ReactNativeFlipper.initializeFlipper(this, reactNativeHost.reactInstanceManager)
     }
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }

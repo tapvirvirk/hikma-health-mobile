@@ -1,3 +1,9 @@
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ */
+
 // const path = require("path");
 const {
   getSentryExpoConfig

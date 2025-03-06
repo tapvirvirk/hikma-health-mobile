@@ -464,6 +464,19 @@ export const PatientsListScreen: FC<PatientsListScreenProps> = observer(
       navigation.navigate("PatientRecordEditor", { editPatientId: undefined })
     }
 
+    // console.log({
+    //   patients: patients.slice(0, 2).map(({ syncStatus, _isEditing, __changes, _raw }) => ({
+    //     syncStatus,
+    //     _isEditing,
+    //     __changes,
+    //     change_values_closed: __changes?.closed,
+    //     change_values_value: __changes?.value,
+    //     _raw,
+    //     id: _raw.id,
+    //     givenName: _raw.given_name,
+    //   })),
+    // })
+
     return (
       <>
         <StatusBar barStyle="dark-content" backgroundColor={colors.palette.neutral200} />

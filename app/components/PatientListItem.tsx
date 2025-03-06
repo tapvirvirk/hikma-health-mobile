@@ -60,6 +60,8 @@ export const PatientListItem = enhance(
             <Text textDecorationLine="underline" size="xl">
               {displayName(patient)}
             </Text>
+            {/* <Text text={patient.id} size="xs" /> */}
+
             <Text
               text={`${translate("common:dob")}: ${
                 isValid(new Date(patient.dateOfBirth))

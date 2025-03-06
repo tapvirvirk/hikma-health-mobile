@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { BarCodeScanner } from "expo-barcode-scanner"
+import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult } from "expo-camera"
 import {
   ViewStyle,
   useColorScheme,
@@ -46,6 +46,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
   const { provider, language } = useStores()
   const [cameraActive, setCameraActive] = useState<boolean>(false)
   const [hasPermission, setHasPermission] = useState<boolean | null>(null)
+  const [facing, setFacing] = useState<CameraType>("back")
+  const [permission, requestPermission] = useCameraPermissions()
   const [scanned, setScanned] = useState(false)
 
   // Pull in navigation via hook
@@ -65,7 +67,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
 
   const openCamera = async () => {
     setScanned(false)
-    const { status } = await BarCodeScanner.requestPermissionsAsync()
+    const { status } = await requestPermission()
     if (status === "granted") {
       setCameraActive(true)
     } else {
@@ -73,7 +75,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
     }
   }
 
-  const handleBarCodeScanned = async ({ type, data }: { data: string; type: number }) => {
+  const handleBarCodeScanned = async ({ data }: BarcodeScanningResult) => {
     setScanned(true)
 
     let canOpen = false
@@ -118,9 +120,11 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
             onPress: () => {
               // User wants to continue as a tester
               if (typeof HIKMA_API_TESTING === "string") {
-                handleBarCodeScanned({ data: HIKMA_API_TESTING, type: 0 }).then(() => {
-                  signIn()
-                })
+                handleBarCodeScanned({ data: HIKMA_API_TESTING } as BarcodeScanningResult).then(
+                  () => {
+                    signIn()
+                  },
+                )
               } else {
                 Alert.alert(
                   "No testing backend URL found. Please refer to our documentation for more information at https://docs.hikmahealth.org/docs/try-demo",
@@ -188,12 +192,9 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
   }
 
   useEffect(() => {
-    const getBarCodeScannerPermissions = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync()
-      setHasPermission(status === "granted")
+    if (!permission?.granted) {
+      requestPermission()
     }
-
-    getBarCodeScannerPermissions()
   }, [])
 
   useEffect(() => {
@@ -220,8 +221,12 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
   if (cameraActive && hasPermission) {
     return (
       <View style={{ height, width }}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        <CameraView
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr"],
+          }}
+          facing={facing}
+          onBarcodeScanned={(barcode) => (scanned ? undefined : handleBarCodeScanned(barcode))}
           style={StyleSheet.absoluteFillObject}
         />
       </View>

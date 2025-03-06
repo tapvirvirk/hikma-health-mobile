@@ -34,7 +34,7 @@ local.properties
 
 # node.js
 #
-node_modules/
+# node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -94,7 +94,7 @@ web-build/
 # .env
 
 # ignore local gradle.properties file
-gradle.properties
+# gradle.properties
 
 
 .yarn

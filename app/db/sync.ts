@@ -35,6 +35,8 @@ export async function syncDB(
   onSyncError: (error: string) => void,
   onSyncCompleted: () => void,
 ) {
+  console.log("ATTEMPTING TO SYNC")
+  return
   const email = await EncryptedStorage.getItem("provider_email")
   const password = await EncryptedStorage.getItem("provider_password")
 
@@ -204,5 +206,105 @@ const countRecordsInChanges = (changes: SyncDatabaseChangeSet): number => {
     const { created, updated, deleted } = changes[tableName]
     result = result + created.length + updated.length + deleted.length
   }
+  return result
+}
+
+/**
+ * A mapping of table names to lists of record ids
+ */
+type LocalSyncRecords = {
+  [tableName: string]: string[]
+}
+
+/**
+ * Given a SyncDatabaseChangeSet, and a list of ids for records that were already synced using the offline sync,
+ * return the a SyncDatabaseChangeSet where the records with the given ids are moved to the updated set
+ * @param {SyncDatabaseChangeSet} changes
+ * @param {LocalSyncRecords} ids
+ * @returns {SyncDatabaseChangeSet} a SyncDatabaseChangeSet where the records with the given ids are moved to the updated set
+ */
+export function moveToUpdated(
+  changes: SyncDatabaseChangeSet,
+  ids: LocalSyncRecords,
+): SyncDatabaseChangeSet {
+  // Handle edge case of empty inputs
+  if (!changes || Object.keys(changes).length === 0) {
+    return changes
+  }
+
+  if (!ids || Object.keys(ids).length === 0) {
+    return changes
+  }
+
+  // Create a deep copy of the changes to avoid modifying the original object
+  const result: SyncDatabaseChangeSet = JSON.parse(JSON.stringify(changes))
+
+  // Track statistics for logging
+  const stats: Record<string, { created: number; deleted: number }> = {}
+
+  // Iterate through each table in the changes
+  for (const tableName in result) {
+    // Initialize stats for this table
+    stats[tableName] = { created: 0, deleted: 0 }
+
+    // Skip if this table doesn't have any synced records in the ids object
+    if (!ids[tableName] || !Array.isArray(ids[tableName]) || ids[tableName].length === 0) {
+      continue
+    }
+
+    // Create a Set for faster lookups
+    const syncedIds = new Set(ids[tableName])
+
+    // Process created records
+    if (result[tableName].created && result[tableName].created.length > 0) {
+      // Find records that were already synced
+      const alreadySynced = result[tableName].created.filter((record) => syncedIds.has(record.id))
+      stats[tableName].created = alreadySynced.length
+
+      // Remove these records from created
+      result[tableName].created = result[tableName].created.filter(
+        (record) => !syncedIds.has(record.id),
+      )
+
+      // Add them to updated (ensure updated array exists)
+      if (!result[tableName].updated) {
+        result[tableName].updated = []
+      }
+
+      // Add them to updated
+      result[tableName].updated = [...result[tableName].updated, ...alreadySynced]
+    }
+
+    // Process deleted records
+    if (result[tableName].deleted && result[tableName].deleted.length > 0) {
+      // Find records that were already synced
+      const alreadySynced = result[tableName].deleted.filter((record) => syncedIds.has(record.id))
+      stats[tableName].deleted = alreadySynced.length
+
+      // Remove these records from deleted
+      result[tableName].deleted = result[tableName].deleted.filter(
+        (record) => !syncedIds.has(record.id),
+      )
+
+      // Add them to updated (ensure updated array exists)
+      if (!result[tableName].updated) {
+        result[tableName].updated = []
+      }
+
+      // Add them to updated
+      result[tableName].updated = [...result[tableName].updated, ...alreadySynced]
+    }
+  }
+
+  // Log statistics about moved records
+  for (const tableName in stats) {
+    const tableStats = stats[tableName]
+    if (tableStats.created > 0 || tableStats.deleted > 0) {
+      console.log(
+        `Moved records for table ${tableName}: ${tableStats.created} from created, ${tableStats.deleted} from deleted to updated`,
+      )
+    }
+  }
+
   return result
 }

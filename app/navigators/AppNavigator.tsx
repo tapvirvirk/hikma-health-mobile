@@ -9,14 +9,22 @@ import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navig
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
 import * as Sentry from "@sentry/react-native"
-import { Alert, AppState, NativeModules, Pressable, StatusBar, useColorScheme } from "react-native"
+import {
+  Alert,
+  AppState,
+  Button,
+  NativeModules,
+  Pressable,
+  StatusBar,
+  useColorScheme,
+} from "react-native"
 import * as Screens from "../screens"
 import Config from "../config"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors, spacing } from "../theme"
 import { useStores } from "../models"
 import { translate } from "../i18n"
-import { Text } from "../components"
+import { SyncManager, Text } from "../components"
 import {
   ArrowUpDownIcon,
   AxeIcon,
@@ -110,6 +118,7 @@ export type AppStackParamList = {
     patientId: string
     defaultStatus: PrescriptionStatus
   }
+  DevicePairing: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -175,7 +184,7 @@ const AppStack = observer(function AppStack() {
       "Are you sure you want to cancel this appointment?",
       [
         {
-          text: translate("yes"),
+          text: translate("common:yes"),
           onPress: () => {
             api
               .cancelAppointment(appointmentId)
@@ -390,6 +399,7 @@ const AppStack = observer(function AppStack() {
               title: "Prescriptions",
             }}
           />
+          <Stack.Screen name="DevicePairing" component={Screens.DevicePairingScreen} />
           {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
         </Stack.Group>
       )}
@@ -444,6 +454,7 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
         }
         style={{ flex: 1 }}
       >
+        <SyncManager />
         <StatusBar backgroundColor={colors.background} />
         <NavigationContainer
           ref={navigationRef}
