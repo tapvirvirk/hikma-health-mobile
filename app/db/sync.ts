@@ -35,8 +35,8 @@ export async function syncDB(
   onSyncError: (error: string) => void,
   onSyncCompleted: () => void,
 ) {
-  console.log("ATTEMPTING TO SYNC")
-  return
+  // console.log("ATTEMPTING TO SYNC")
+  // return
   const email = await EncryptedStorage.getItem("provider_email")
   const password = await EncryptedStorage.getItem("provider_password")
 

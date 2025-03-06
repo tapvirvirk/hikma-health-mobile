@@ -34,7 +34,7 @@ local.properties
 
 # node.js
 #
-# node_modules/
+node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -87,14 +87,17 @@ npm-debug.*
 web-build/
 
 # Configurations
-# !env.js
+!env.js
 
 /coverage
 /coverage/*
-# .env
+.env
 
 # ignore local gradle.properties file
-# gradle.properties
+gradle.properties
+
+
+hikmahealthdb.db
 
 
 .yarn
@@ -103,3 +106,9 @@ web-build/
 coverage
 /lib/
 .bsb.lock
+
+.env.local
+
+
+notes.txt
+.env.local
