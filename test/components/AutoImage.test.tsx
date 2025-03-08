@@ -1,6 +1,6 @@
 import { AutoImage, useAutoImage } from "../../app/components"
 import { Image, Platform } from "react-native"
-import { renderHook } from "@testing-library/react-hooks"
+import { renderHook } from "@testing-library/react"
 import { render } from "@testing-library/react-native"
 import React from "react"
 
