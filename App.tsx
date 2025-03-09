@@ -5,6 +5,7 @@ import * as SplashScreen from "expo-splash-screen"
 import * as Sentry from "@sentry/react-native"
 import Config from "react-native-config"
 import codePush from "react-native-code-push"
+
 // import { captureConsoleIntegration } from "@sentry/integrations"
 
 Sentry.init({
