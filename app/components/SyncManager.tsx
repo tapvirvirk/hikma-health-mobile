@@ -453,6 +453,7 @@ const P2PSyncManager = observer(function P2PSyncManager(props: SyncManagerProps)
 
   const [isListenerSet, setIsListenerSet] = useState(false)
 
+  // FIXME: Put the password and salt in environment variables
   const [
     { myIpAddress, qrCode, pairedDevices },
     { generateQRCode, scanQRCode, removePairedDevice, sendRequest },

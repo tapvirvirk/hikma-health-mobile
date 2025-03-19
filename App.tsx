@@ -4,8 +4,6 @@ import React from "react"
 import * as SplashScreen from "expo-splash-screen"
 import * as Sentry from "@sentry/react-native"
 import Config from "react-native-config"
-import codePush from "react-native-code-push"
-
 // import { captureConsoleIntegration } from "@sentry/integrations"
 
 Sentry.init({
@@ -27,9 +25,4 @@ function IgniteApp() {
   return <App hideSplashScreen={SplashScreen.hideAsync} />
 }
 
-let codePushOptions = {
-  updateDialog: true,
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
-  installMode: codePush.InstallMode.IMMEDIATE,
-}
-export default Sentry.wrap(codePush(codePushOptions)(IgniteApp))
+export default Sentry.wrap(IgniteApp)

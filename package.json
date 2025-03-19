@@ -84,7 +84,6 @@
     "react-i18next": "^15.4.0",
     "react-native": "^0.76.7",
     "react-native-aes-crypto": "^3.2.1",
-    "react-native-code-push": "^9.0.0",
     "react-native-config": "^1.5.3",
     "react-native-date-picker": "^5.0.9",
     "react-native-device-info": "^14.0.2",

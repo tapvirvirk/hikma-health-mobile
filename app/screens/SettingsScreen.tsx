@@ -13,7 +13,6 @@ import { useLockWhenIdleSettings } from "../hooks/useLockWhenIdleSettings"
 import { generateDummyPatients, insertBenchmarkingData } from "../utils/benchmarking"
 import { translate } from "../i18n"
 import { useDBProvider } from "../hooks/useDBProvider"
-import codePush from "react-native-code-push"
 import * as Sentry from "@sentry/react-native"
 import Toast from "react-native-root-toast"
 import { useOTAVersion } from "../hooks/useOTAVersion"
@@ -139,82 +138,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(function Setting
         marginBottom: 100,
       },
     })
-    codePush
-      .checkForUpdate()
-      .then((res) => {
-        if (res) {
-          codePush
-            .sync({
-              updateDialog: true,
-              installMode: codePush.InstallMode.IMMEDIATE,
-            })
-            .then((res) => {
-              if (res === codePush.SyncStatus.UP_TO_DATE) {
-                Toast.show("Already up to date", {
-                  duration: Toast.durations.LONG,
-                  containerStyle: {
-                    marginBottom: 100,
-                  },
-                })
-              } else if (res === codePush.SyncStatus.UPDATE_INSTALLED) {
-                Toast.show("Update installed", {
-                  duration: Toast.durations.LONG,
-                  containerStyle: {
-                    marginBottom: 100,
-                  },
-                })
-              } else if (res === codePush.SyncStatus.UPDATE_IGNORED) {
-                Toast.show("Update ignored", {
-                  duration: Toast.durations.LONG,
-                  containerStyle: {
-                    marginBottom: 100,
-                  },
-                })
-              } else if (res === codePush.SyncStatus.UNKNOWN_ERROR) {
-                Toast.show("Unknown error", {
-                  duration: Toast.durations.LONG,
-                  containerStyle: {
-                    marginBottom: 100,
-                  },
-                })
-              } else if (res === codePush.SyncStatus.CHECKING_FOR_UPDATE) {
-                Toast.show("Checking for update", {
-                  duration: Toast.durations.LONG,
-                  containerStyle: {
-                    marginBottom: 100,
-                  },
-                })
-              }
-            })
-            .catch((fail) => {
-              Toast.show("Error checking for updates: " + fail, {
-                duration: Toast.durations.LONG,
-                containerStyle: {
-                  marginBottom: 100,
-                },
-              })
-              Sentry.captureException(fail)
-            })
-        } else {
-          Toast.hide(updateToast)
-          Toast.show("No new updates", {
-            duration: Toast.durations.LONG,
-            containerStyle: {
-              marginBottom: 100,
-            },
-          })
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-        Toast.show("Error checking for updates: " + err, {
-          duration: Toast.durations.LONG,
-          containerStyle: {
-            marginBottom: 100,
-          },
-        })
-        Sentry.captureException(err)
-      })
   }
 
   const openPrivacyPolicy = () => {
@@ -352,14 +275,15 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(function Setting
           )}
         </View>
 
-        <View style={$withBottomBorder} py={12}>
+        {/* TODO: Bring back when expo EAS services are implemented */}
+        {/* <View style={$withBottomBorder} py={12}>
           <Pressable onPress={checkForUpdates}>
             <View direction="row" justifyContent="space-between">
               <Text tx="settingsScreen:checkOTAForUpdates" size="sm" />
               <LucideRefreshCcw size={16} color={colors.palette.neutral600} />
             </View>
           </Pressable>
-        </View>
+        </View> */}
 
         <If condition={false}>
           <View direction="row" justifyContent="space-between" style={$withBottomBorder} py={12}>
