@@ -247,12 +247,13 @@ const AppStack = observer(function AppStack() {
         headerShown: true,
         navigationBarColor: colors.background,
         orientation: "all",
+        headerTransparent: false,
         headerStyle: { backgroundColor: colors.background },
         headerRight: () => (
           <View direction="row" gap={12}>
             {isSyncing ? (
               <Pressable
-                onPress={() => {
+                onPressOut={() => {
                   sync.setProp("state", "idle")
                   sync.setProp("error", null)
                 }}
@@ -260,17 +261,38 @@ const AppStack = observer(function AppStack() {
                 <LoaderIcon size={24} color="black" />
               </Pressable>
             ) : (
-              <Pressable onPress={startSync}>
+              <Pressable onPressOut={startSync}>
                 <ArrowUpDownIcon size={24} color="black" />
               </Pressable>
             )}
-            <Pressable onPress={() => navigation.navigate("AppointmentsList")}>
+            <Pressable
+              onPressIn={() => navigation.navigate("AppointmentsList")}
+              android_ripple={{ color: colors.palette.neutral300 }}
+              hitSlop={12}
+              style={({ pressed }) => ({
+                backgroundColor: pressed ? colors.palette.neutral200 : colors.background,
+              })}
+            >
               <LucideCalendar size={24} color="black" />
             </Pressable>
-            <Pressable onPress={() => navigation.navigate("PrescriptionsList")}>
+            <Pressable
+              onPressIn={() => navigation.navigate("PrescriptionsList")}
+              android_ripple={{ color: colors.palette.neutral300 }}
+              hitSlop={12}
+              style={({ pressed }) => ({
+                backgroundColor: pressed ? colors.palette.neutral200 : colors.background,
+              })}
+            >
               <LucidePillBottle size={24} color="black" />
             </Pressable>
-            <Pressable onPress={() => navigation.navigate("Settings")}>
+            <Pressable
+              onPressIn={() => navigation.navigate("Settings")}
+              android_ripple={{ color: colors.palette.neutral300 }}
+              hitSlop={12}
+              style={({ pressed }) => ({
+                backgroundColor: pressed ? colors.palette.neutral200 : colors.background,
+              })}
+            >
               <Settings2Icon size={24} color="black" />
             </Pressable>
           </View>
