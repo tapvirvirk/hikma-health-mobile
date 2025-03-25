@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Dimensions, Pressable, RefreshControl, ViewStyle } from "react-native"
+import { Dimensions, Pressable, RefreshControl, ViewStyle, Platform } from "react-native"
 import { AppStackScreenProps } from "../navigators"
 import { $inputWrapperStyle, If, Text, View } from "../components"
 import { withObservables } from "@nozbe/watermelondb/react"
@@ -25,6 +25,8 @@ import { catchError, of as of$ } from "rxjs"
 import { useAsyncPersistedState } from "../hooks/usePersistedState"
 
 const { height } = Dimensions.get("screen")
+
+const isIos = Platform.OS === "ios"
 
 interface AppointmentsListScreenProps extends AppStackScreenProps<"AppointmentsList"> {}
 
@@ -58,7 +60,7 @@ export const AppointmentsListScreen: FC<AppointmentsListScreenProps> = observer(
       clinicId: [provider.clinic_id],
     })
 
-    const [openDropdown, setOpenDropdown] = useState(false)
+    const [openDropdown, setOpenDropdown] = useState<"status" | "clinic" | null>(null)
 
     // If the date range name changes, update the start and end date
     useEffect(() => {
@@ -166,7 +168,8 @@ export const AppointmentsListScreen: FC<AppointmentsListScreenProps> = observer(
                 <Text text="Clinic" preset="formLabel" />
                 <DropDownPicker
                   multiple={true}
-                  open={openDropdown}
+                  open={openDropdown === "clinic"}
+                  onClose={() => setOpenDropdown(null)}
                   searchable
                   style={{
                     marginTop: 4,
@@ -197,7 +200,7 @@ export const AppointmentsListScreen: FC<AppointmentsListScreenProps> = observer(
                     clinics.map((clinic) => ({ label: clinic.name, value: clinic.id })),
                     ["label"],
                   )}
-                  setOpen={setOpenDropdown}
+                  setOpen={() => setOpenDropdown("clinic")}
                   // setValue={(callback) => {
                   //   setFilters((prevFilters) => {
                   //     const data = callback(prevFilters.clinicId)
@@ -211,8 +214,8 @@ export const AppointmentsListScreen: FC<AppointmentsListScreenProps> = observer(
               </View>
               <View flex={1}>
                 <Text text="Status" preset="formLabel" />
-                <View style={$pickerContainer}>
-                  <Picker
+                {/* <View style={$pickerContainer}> */}
+                {/* <Picker
                     selectedValue={filters.status}
                     onValueChange={(itemValue, itemIndex) =>
                       setFilters({ ...filters, status: itemValue })
@@ -227,8 +230,40 @@ export const AppointmentsListScreen: FC<AppointmentsListScreenProps> = observer(
                     <Picker.Item label="Pending" value="pending" />
                     <Picker.Item label="Completed" value="completed" />
                     <Picker.Item label="Cancelled" value="cancelled" />
-                  </Picker>
-                </View>
+                  </Picker> */}
+                {/* </View> */}
+
+                <DropDownPicker
+                  open={openDropdown === "status"}
+                  setOpen={() => setOpenDropdown("status")}
+                  onClose={() => setOpenDropdown(null)}
+                  value={filters.status}
+                  setValue={(callback) => {
+                    const value = callback(filters.status)
+                    setFilters({ ...filters, status: value })
+                  }}
+                  style={{
+                    marginTop: 4,
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    backgroundColor: colors.palette.neutral200,
+                    borderColor: colors.palette.neutral400,
+                    zIndex: 980000,
+                    flex: 1,
+                  }}
+                  zIndex={980000}
+                  zIndexInverse={980000}
+                  closeOnBackPressed
+                  listMode="MODAL"
+                  modalTitle="Status"
+                  items={[
+                    { label: "All", value: "all" },
+                    { label: "Checked-in", value: "checked_in" },
+                    { label: "Pending", value: "pending" },
+                    { label: "Completed", value: "completed" },
+                    { label: "Cancelled", value: "cancelled" },
+                  ]}
+                />
               </View>
             </View>
 

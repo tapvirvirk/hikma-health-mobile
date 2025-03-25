@@ -24,7 +24,7 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import { colors, spacing } from "../theme"
 import { useStores } from "../models"
 import { translate } from "../i18n"
-import { SyncManager, Text } from "../components"
+import { Text } from "../components"
 import {
   ArrowUpDownIcon,
   AxeIcon,
@@ -476,7 +476,6 @@ export const AppNavigator = observer(function AppNavigator(props: NavigationProp
         }
         style={{ flex: 1 }}
       >
-        <SyncManager />
         <StatusBar backgroundColor={colors.background} />
         <NavigationContainer
           ref={navigationRef}

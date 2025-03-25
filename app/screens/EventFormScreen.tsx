@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Alert, ViewStyle } from "react-native"
+import { Alert, ActivityIndicator, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "../navigators"
 import {
   $inputWrapperStyle,
@@ -38,12 +38,23 @@ import _ from "lodash"
 import DropDownPicker from "react-native-dropdown-picker"
 import { LucideAlertCircle } from "lucide-react-native"
 import * as Sentry from "@sentry/react-native"
+import * as DocumentPicker from "expo-document-picker"
+import { getHHApiUrl } from "app/utils/storage"
 
 // type ModalState = { activeModal: "medication" | "diagnosis" | null, medication: MedicationEntry | null, diagnoses: any[] }
 type ModalState =
   | { activeModal: null }
   | { activeModal: "medication"; medication: MedicationEntry }
   | { activeModal: "diagnoses" }
+
+// File upload state type
+type FileUploadState = {
+  isUploading: boolean
+  isComplete: boolean
+  fileName: string | null
+  fileId: string | null
+  error: string | null
+}
 
 interface EventFormScreenProps extends AppStackScreenProps<"EventForm"> {}
 
@@ -106,6 +117,9 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
   })
   const [diagnoses, setDiagnoses] = useState<ICDEntry[]>([])
   const [medicines, setMedicines] = useState<MedicationEntry[]>([])
+
+  // File upload states for each field
+  const [fileUploads, setFileUploads] = useState<Record<string, FileUploadState>>({})
 
   const { form, state: formState, isLoading } = useEventForm(formId, visitId, patientId, eventId)
   const { isOpen, openDialogue, closeDialogue } = useOpenDialogue()
@@ -183,7 +197,10 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
         .map((field) => ({
           fieldId: field.id,
           fieldType: field.fieldType,
-          value: data[field.name] || "",
+          value:
+            field.inputType === "file"
+              ? fileUploads[field.name]?.fileId || ""
+              : data[field.name] || "",
           inputType: field.inputType,
           name: field.name,
         }))
@@ -347,6 +364,115 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
     return form?.formFields.find((field) => field.fieldType === "medicine")?.options || []
   }, [form?.formFields])
 
+  // Handle file selection and upload
+  const handleFileUpload = async (fieldName: string) => {
+    console.log(`Starting file upload for field: ${fieldName}`)
+    try {
+      // Initialize upload state
+      console.log("Initializing upload state")
+      setFileUploads((prev) => ({
+        ...prev,
+        [fieldName]: {
+          isUploading: true,
+          isComplete: false,
+          fileName: null,
+          fileId: null,
+          error: null,
+        },
+      }))
+
+      // Pick document
+      console.log("Opening document picker")
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*", // Allow any file type
+        copyToCacheDirectory: true,
+      })
+
+      if (result.canceled) {
+        console.log("Document picking canceled by user")
+        setFileUploads((prev) => ({
+          ...prev,
+          [fieldName]: {
+            isUploading: false,
+            isComplete: false,
+            fileName: null,
+            fileId: null,
+            error: null,
+          },
+        }))
+        return
+      }
+
+      const file = result.assets[0]
+      console.log(`File selected: ${file.name}, type: ${file.mimeType}, size: ${file.size} bytes`)
+
+      // Create FormData object
+      console.log("Creating FormData for upload")
+      const formData = new FormData()
+      formData.append("file", {
+        uri: file.uri,
+        name: file.name,
+        type: file.mimeType,
+      } as any)
+
+      // Upload to server
+      const apiUrl = await getHHApiUrl()
+      console.log(`Uploading to ${apiUrl}/v1/api/forms/resources`)
+      const response = await fetch(`${apiUrl}/v1/api/forms/resources`, {
+        method: "PUT",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+
+      console.log("response: ", response)
+
+      console.log(`Server response status: ${response.status}`)
+      if (!response.ok) {
+        throw new Error(`Upload failed with status ${response.status}`)
+      }
+
+      const responseData = await response.json()
+      console.log("Upload successful, response data:", responseData)
+
+      // Update state with successful upload
+      console.log(`Updating state for successful upload of ${file.name}`)
+      setFileUploads((prev) => ({
+        ...prev,
+        [fieldName]: {
+          isUploading: false,
+          isComplete: true,
+          fileName: file.name,
+          fileId: responseData.id, // Assuming the API returns an id field
+          error: null,
+        },
+      }))
+
+      // Update form control value
+      console.log(`Setting form value for ${fieldName} to ${responseData.id}`)
+      setValue(fieldName as never, responseData.id as never)
+    } catch (error) {
+      console.error("File upload error:", error)
+      Sentry.captureException(error)
+
+      // Update state with error
+      console.log(`Updating state for failed upload: ${error.message}`)
+      setFileUploads((prev) => ({
+        ...prev,
+        [fieldName]: {
+          isUploading: false,
+          isComplete: false,
+          fileName: null,
+          fileId: null,
+          error: error.message || "Failed to upload file",
+        },
+      }))
+
+      Alert.alert("Upload Error", "Failed to upload file. Please try again.")
+    }
+  }
+
   if (isLoading) return <Text>Loading...</Text>
   if (!form) {
     return (
@@ -480,6 +606,58 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
                   />
                 </If>
 
+                <If condition={field.inputType === "file"}>
+                  <Controller
+                    render={({ field: { onChange, value } }) => (
+                      <View gap={4}>
+                        <Text text={field.name} preset="formLabel" />
+                        <View>
+                          {fileUploads[field.name]?.isUploading ? (
+                            <View
+                              direction="row"
+                              alignItems="center"
+                              gap={8}
+                              style={$inputWrapperStyle}
+                            >
+                              <ActivityIndicator size="small" color={colors.palette.primary400} />
+                              <Text text="Uploading..." />
+                            </View>
+                          ) : fileUploads[field.name]?.isComplete ? (
+                            <View
+                              direction="row"
+                              alignItems="center"
+                              justifyContent="space-between"
+                            >
+                              <Text text={fileUploads[field.name]?.fileName || "File uploaded"} />
+                              <Button
+                                text="Replace"
+                                style={{ flex: 1 }}
+                                preset="default"
+                                onPress={() => handleFileUpload(field.name)}
+                              />
+                            </View>
+                          ) : (
+                            <Button
+                              text="Select File"
+                              preset="default"
+                              style={{ flex: 1 }}
+                              onPress={() => handleFileUpload(field.name)}
+                            />
+                          )}
+                          {fileUploads[field.name]?.error && (
+                            <Text
+                              text={fileUploads[field.name]?.error || ""}
+                              color={colors.error}
+                            />
+                          )}
+                        </View>
+                      </View>
+                    )}
+                    name={field.name as never}
+                    control={control}
+                  />
+                </If>
+
                 <If condition={field.inputType === "date"}>
                   <Controller
                     render={({ field: { onChange, value } }) => (
@@ -580,7 +758,7 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
         <BottomSheetScrollView style={{}}>
           <If condition={modalState.activeModal === "medication"}>
             <MedicationEditor
-              medication={modalState.medication}
+              medication={modalState.medication as MedicationEntry}
               medicineOptions={medicineOptions}
               onSubmit={updateMedication}
             />

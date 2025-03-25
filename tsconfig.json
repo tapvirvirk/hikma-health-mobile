@@ -20,7 +20,8 @@
     "paths": {
       "app/*": ["./app/*"],
       "assets/*": ["./assets/*"]
-    }
+    },
+    "preserveSymlinks": true
   },
   "extends": "expo/tsconfig.base",
   "ts-node": {

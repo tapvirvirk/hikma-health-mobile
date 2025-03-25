@@ -45,7 +45,6 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
   // Pull in one of our MST stores
   const { provider, language } = useStores()
   const [cameraActive, setCameraActive] = useState<boolean>(false)
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null)
   const [facing, setFacing] = useState<CameraType>("back")
   const [permission, requestPermission] = useCameraPermissions()
   const [scanned, setScanned] = useState(false)
@@ -66,8 +65,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
   }
 
   const openCamera = async () => {
+    // console.warn("shogin")
     setScanned(false)
     const { status } = await requestPermission()
+    console.log("status", status)
     if (status === "granted") {
       setCameraActive(true)
     } else {
@@ -218,7 +219,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen({
   //   ? require("./../assets/images/logo_no_text.png")
   //   : require("./../assets/images/launch_icon.png")
 
-  if (cameraActive && hasPermission) {
+  if (cameraActive && permission?.granted) {
     return (
       <View style={{ height, width }}>
         <CameraView

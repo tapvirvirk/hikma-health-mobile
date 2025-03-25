@@ -207,7 +207,7 @@ export interface SyncManagerProps {}
 export const SyncManager = observer(function SyncManager(props: SyncManagerProps) {
   const netInfo = useNetInfo()
 
-  return null
+  return <></>
 
   // FIXME: for now, always sync over P2P - fix later and replace with bottom code
   return <P2PSyncManager />

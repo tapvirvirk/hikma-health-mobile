@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Alert, Pressable, TextStyle, ViewStyle } from "react-native"
+import { Alert, Platform, Pressable, TextStyle, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "../navigators"
 import { Button, If, Screen, Text, View } from "../components"
 import { colors, spacing } from "../theme"
@@ -115,12 +115,22 @@ export const AppointmentViewScreen: FC<AppointmentViewScreenProps> = observer(
     }
 
     const startNewVisit = () => {
-      navigation.navigate("NewVisit", {
+      const navigateParams = {
         patientId: patient.id,
         visitId: null,
         visitDate: new Date().getTime(),
         appointmentId: appointment.id,
-      })
+      }
+
+      // ios screen is not poped so the new visit screen is not visible, unless we pop the appointment view screen manually then navigate
+      if (Platform.OS === "ios") {
+        navigation.goBack()
+        setTimeout(() => {
+          navigation.navigate("NewVisit", navigateParams)
+        }, 300)
+      } else {
+        navigation.navigate("NewVisit", navigateParams)
+      }
     }
 
     const checkinPatient = () => {

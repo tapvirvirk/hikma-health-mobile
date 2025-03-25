@@ -18,6 +18,7 @@ type EventFieldItem = {
     | "dropdown"
     | "medicine"
     | "input-group"
+    | "file"
   multi?: boolean
   options?: any[]
 }
