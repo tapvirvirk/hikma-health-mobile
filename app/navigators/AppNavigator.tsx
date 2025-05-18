@@ -26,6 +26,7 @@ import { useStores } from "../models"
 import { translate } from "../i18n"
 import { Text } from "../components"
 import {
+  AlertTriangleIcon,
   ArrowUpDownIcon,
   AxeIcon,
   LoaderIcon,
@@ -144,6 +145,9 @@ const AppStack = observer(function AppStack() {
     if (provider.email === "tester.g@gmail.com") {
       return Alert.alert("Please sign in with your server to continue syncing")
     }
+
+    // force local timestamp to change
+
     const hasLocalChangesToPush = await hasUnsyncedChanges({ database })
 
     Toast.show(translate("syncingStarted"), {
@@ -176,6 +180,32 @@ const AppStack = observer(function AppStack() {
       )
       Sentry.captureException(err)
     })
+  }
+
+  const localPushSupportStuff = () => {
+    // const toastId = "local-push-support-stuff"
+    Toast.show("Compiling changes")
+
+    const updates = ["patients", "appointments", "events", "prescriptions"].map(async (tbl) => {
+      // local update
+      const post = await database.get(tbl).query()
+
+      return post.map(
+        async (p) =>
+          await p.update((row) => {
+            row.updated_at = new Date()
+          }),
+      )
+    })
+
+    Toast.show("Waiting for changes to be pushed")
+    Promise.all(updates)
+      .then(() => {
+        Toast.show("Success!")
+      })
+      .catch(() => {
+        Toast.show("Failed!")
+      })
   }
 
   const cancelAppointment = (navigation: any, appointmentId: string) => {
@@ -249,6 +279,13 @@ const AppStack = observer(function AppStack() {
         orientation: "all",
         headerTransparent: false,
         headerStyle: { backgroundColor: colors.background },
+        headerLeft: () => (
+          <View>
+            <Pressable onPressOut={localPushSupportStuff}>
+              <AlertTriangleIcon size={24} color={"orange"} />
+            </Pressable>
+          </View>
+        ),
         headerRight: () => (
           <View direction="row" gap={12}>
             {isSyncing ? (

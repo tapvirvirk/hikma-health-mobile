@@ -16,8 +16,6 @@
     <item name="windowSplashScreenBackground">@color/splashscreen_background</item>
     <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen_logo</item>
     <item name="postSplashScreenTheme">@style/AppTheme</item>
-  </style>
-  <style name="Theme.App.SplashScreen" parent="AppTheme">
     <item name="android:windowIsTranslucent">true</item>
   </style>
 </resources>
