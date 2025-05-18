@@ -116,6 +116,7 @@ const en = {
     signOutDescription: "You will be signed out of your account.",
     privacyPolicy: "Privacy Policy",
     checkOTAForUpdates: "Check for Quick Updates",
+    syncSettings: "Sync Settings",
   },
   errorScreen: {
     title: "An error occured in the application.",
@@ -142,6 +143,12 @@ const en = {
   patientReport: {
     patientMedicalRecord: "Patient Medical Record",
     PatientInformation: "Patient Information",
+  },
+  syncSettingsScreen: {
+    title: "Sync Settings",
+    confirmSetDefault: "Confirm Set Default",
+    confirmSetDefaultDescription: "Are you sure you want to set this server as the default?",
+    syncError: "Sync Error",
   },
   common: {
     chooseLanguage: "Choose Language",

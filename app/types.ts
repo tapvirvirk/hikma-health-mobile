@@ -99,12 +99,19 @@ export type MedicationEntry = {
 }
 
 export const priorityValues = ["high", "low", "normal", "emergency"] as const
-export const statusValues = ["pending", "prepared", "picked-up", "not-picked-up", "partially-picked-up", "cancelled", "other"] as const
-
+export const statusValues = [
+  "pending",
+  "prepared",
+  "picked-up",
+  "not-picked-up",
+  "partially-picked-up",
+  "cancelled",
+  "other",
+] as const
 
 export type PrescriptionItem = MedicationEntry & {
   medicationId: string
-  quantity: number,
+  quantity: number
   status: (typeof statusValues)[number]
   priority: (typeof priorityValues)[number]
   filledAt: Date | null
@@ -152,4 +159,4 @@ export type Appointment = {
   deletedAt: Date | null
 }
 
-
+export type ServerType = "local" | "cloud"

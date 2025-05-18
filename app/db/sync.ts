@@ -9,6 +9,7 @@ import database from "."
 import Config from "react-native-config"
 import EncryptedStorage from "react-native-encrypted-storage"
 import { api } from "../services/api"
+import { SyncServer } from "app/utils/sync"
 
 global.Buffer = require("buffer").Buffer
 
@@ -119,6 +120,14 @@ export async function syncDB(
           console.error("Sync rejected ids", res.experimentalRejectedIds)
           // TODO: handle rejected ids
         }
+
+        // If there are no errors, update the last pull timestamp for the cloud server
+        SyncServer.setLastPullTimestamp("cloud", lastPulledAt).catch((error) => {
+          console.error(
+            "Failed to set last pull timestamp. This could be an issue, although unlikely to be serious since watermelondb tracks its own timestamps for this internally.",
+            error,
+          )
+        })
       } catch (error) {
         console.error(error)
         onSyncError(String(error))
@@ -200,7 +209,7 @@ Count the number of records inside a changeset
 @param {SyncDatabaseChangeSet} changes
 @returns {number} count of records in changeset
 */
-const countRecordsInChanges = (changes: SyncDatabaseChangeSet): number => {
+export const countRecordsInChanges = (changes: SyncDatabaseChangeSet): number => {
   let result = 0
   for (const tableName in changes) {
     const { created, updated, deleted } = changes[tableName]

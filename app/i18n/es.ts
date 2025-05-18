@@ -117,6 +117,7 @@ const es: ENTranslations = {
     signOutDescription: "Se cerrará la sesión de su cuenta.",
     privacyPolicy: "Política de Privacidad",
     checkOTAForUpdates: "Buscar actualizaciones rápidas",
+    syncSettings: "Configuración de Sincronización",
   },
   errorScreen: {
     title: "Se produjo un error en la aplicación.",
@@ -143,6 +144,13 @@ const es: ENTranslations = {
   patientReport: {
     patientMedicalRecord: "Historial médico del paciente",
     PatientInformation: "Información del paciente",
+  },
+  syncSettingsScreen: {
+    title: "Configuración de Sincronización",
+    confirmSetDefault: "Confirmar Establecer por Defecto",
+    confirmSetDefaultDescription:
+      "¿Está seguro de que desea establecer este servidor como predeterminado?",
+    syncError: "Error de Sincronización",
   },
   common: {
     chooseLanguage: "Elige un idioma",

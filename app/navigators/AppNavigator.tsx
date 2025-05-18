@@ -40,7 +40,7 @@ import { hasUnsyncedChanges } from "@nozbe/watermelondb/sync"
 import database from "../db"
 import { on } from "@nozbe/watermelondb/QueryDescription"
 import { View } from "../components"
-import { PatientRecord } from "../types"
+import { PatientRecord, ServerType } from "../types"
 import PatientModel from "../db/model/Patient"
 import { SafeAreaView } from "react-native-safe-area-context"
 import AppointmentModel from "../db/model/Appointment"
@@ -48,6 +48,8 @@ import { api } from "../services/api"
 import Toast from "react-native-root-toast"
 import { getHHApiUrl } from "../utils/storage"
 import { PrescriptionStatus } from "../db/model/Prescription"
+import { localSyncDB } from "app/db/localSync"
+import { SyncServer } from "app/utils/sync"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -120,6 +122,7 @@ export type AppStackParamList = {
     defaultStatus: PrescriptionStatus
   }
   DevicePairing: undefined
+  SyncSettings: undefined
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -146,7 +149,7 @@ const AppStack = observer(function AppStack() {
       return Alert.alert("Please sign in with your server to continue syncing")
     }
 
-    // force local timestamp to change
+    const activeServer = (await SyncServer.getActive())?.type || ("remote" as ServerType)
 
     const hasLocalChangesToPush = await hasUnsyncedChanges({ database })
 
@@ -157,29 +160,55 @@ const AppStack = observer(function AppStack() {
       },
     })
 
-    syncDB(
-      hasLocalChangesToPush,
-      sync.startSync,
-      sync.startResolve,
-      sync.startPush,
-      console.log,
-      sync.errorSync,
-      sync.finishSync,
-    ).catch((err) => {
-      sync.setProp("state", "idle")
-      console.error(err)
-      Toast.show(
-        "❌ Error syncing. Please make sure you have internet or contact your administrator.",
-        {
-          position: Toast.positions.BOTTOM,
-          containerStyle: {
-            marginBottom: 100,
+    if (activeServer === "local") {
+      return localSyncDB({
+        hasLocalChangesToPush,
+        setSyncStart: sync.startSync,
+        setSyncResolution: sync.startResolve,
+        setPushStart: sync.startPush,
+        updateSyncStatistic: console.log,
+        onSyncError: sync.errorSync,
+        onSyncCompleted: sync.finishSync,
+      }).catch((err) => {
+        sync.setProp("state", "idle")
+        console.error(err)
+        Toast.show(
+          "❌ Error syncing locally. Please make sure you are on the same network and Wi-Fi is enabled.",
+          {
+            position: Toast.positions.BOTTOM,
+            containerStyle: {
+              marginBottom: 100,
+            },
+            duration: Toast.durations.LONG,
           },
-          duration: Toast.durations.LONG,
-        },
-      )
-      Sentry.captureException(err)
-    })
+        )
+        Sentry.captureException(err)
+      })
+    } else {
+      return syncDB(
+        hasLocalChangesToPush,
+        sync.startSync,
+        sync.startResolve,
+        sync.startPush,
+        console.log,
+        sync.errorSync,
+        sync.finishSync,
+      ).catch((err) => {
+        sync.setProp("state", "idle")
+        console.error(err)
+        Toast.show(
+          "❌ Error syncing. Please make sure you have internet or contact your administrator.",
+          {
+            position: Toast.positions.BOTTOM,
+            containerStyle: {
+              marginBottom: 100,
+            },
+            duration: Toast.durations.LONG,
+          },
+        )
+        Sentry.captureException(err)
+      })
+    }
   }
 
   const localPushSupportStuff = () => {
@@ -243,6 +272,14 @@ const AppStack = observer(function AppStack() {
   const isSignedIn = provider.isSignedIn
 
   useEffect(() => {
+    // console.log("fetching")
+    // fetch("http://192.168.7.184:3000/hello/john", {
+    //   method: "GET",
+    //   // headers,
+    // })
+    //   // .then((res) => res.json())
+    //   .then(async (res) => console.log(await res.text()))
+    //   .catch((err) => console.error(err))
     if (isSignedIn) {
       // Set the sentry user
       // TODO: Bring this back with the development of transparency tracking. Once implemented, if the user does not give permissions, do not set the user.
@@ -453,6 +490,13 @@ const AppStack = observer(function AppStack() {
             }}
           />
           <Stack.Screen name="DevicePairing" component={Screens.DevicePairingScreen} />
+          <Stack.Screen
+            name="SyncSettings"
+            component={Screens.SyncSettingsScreen}
+            options={{
+              title: translate("syncSettingsScreen:title"),
+            }}
+          />
           {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
         </Stack.Group>
       )}
