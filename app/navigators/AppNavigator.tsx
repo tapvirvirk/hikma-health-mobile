@@ -193,7 +193,7 @@ const AppStack = observer(function AppStack() {
       return post.map(
         async (p) =>
           await p.update((row) => {
-            row.updated_at = new Date()
+            row.is_deleted = row.is_deleted
           }),
       )
     })
