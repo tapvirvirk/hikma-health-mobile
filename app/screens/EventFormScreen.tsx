@@ -180,12 +180,15 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
     }, [modalState.activeModal]),
   )
 
+  // This determines if the form can be saved - forms are editable by default unless explicitly marked as non-editable
   const canSaveForm = useMemo(() => {
     if (loading) {
       return false
     }
-    return form?.isEditable ?? false
-  }, [form?.isEditable, loading])
+    // If eventId is null, this is a new form being created, so it should be editable
+    // Otherwise, respect the form's isEditable property
+    return (eventId === null || form?.isEditable) ?? false
+  }, [form?.isEditable, loading, eventId])
 
   const onSubmit = async (data: Record<string, any>) => {
     if (loading) {

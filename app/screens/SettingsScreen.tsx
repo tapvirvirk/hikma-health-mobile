@@ -4,7 +4,15 @@ import { ViewStyle, Image, Pressable, Linking, Alert } from "react-native"
 import { AppStackScreenProps } from "../navigators"
 import { Button, If, LanguageToggle, Screen, Text, TextField, Toggle, View } from "../components"
 import { colors } from "../theme"
-import { ChevronRight, LockIcon, LucideRefreshCcw, Share2Icon, UndoIcon } from "lucide-react-native"
+import {
+  ChevronRight,
+  ChevronRightIcon,
+  LockIcon,
+  LucideRefreshCcw,
+  MonitorCogIcon,
+  Share2Icon,
+  UndoIcon,
+} from "lucide-react-native"
 // import { useNavigation } from "@react-navigation/native"
 import { useStores } from "../models"
 import * as Notifications from "expo-notifications"
@@ -297,7 +305,8 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(function Setting
           </View>
         </If>
 
-        <If condition={true}>
+        {/* TODO: reconsider in the wake of new local sync using a local server - Disabled for now */}
+        <If condition={false}>
           <Pressable onPress={() => navigation.navigate("DevicePairing")}>
             <View direction="row" justifyContent="space-between" style={$withBottomBorder} py={12}>
               <View direction="row" justifyContent="space-between" flex={1}>
@@ -308,8 +317,17 @@ export const SettingsScreen: FC<SettingsScreenProps> = observer(function Setting
           </Pressable>
         </If>
 
+        <Pressable onPress={() => navigation.navigate("SyncSettings")}>
+          <View direction="row" justifyContent="space-between" style={$withBottomBorder} py={12}>
+            <View direction="row" justifyContent="space-between" flex={1}>
+              <Text tx="settingsScreen:syncSettings" size="sm" />
+              <ChevronRightIcon size={16} color={colors.palette.neutral600} />
+            </View>
+          </View>
+        </Pressable>
+
         <View style={$withBottomBorder} py={4} pb={22}>
-          <Text text={translate("common:chooseLanguage")} size="sm" />
+          <Text tx="common:chooseLanguage" size="sm" />
           <LanguageToggle />
         </View>
       </View>
