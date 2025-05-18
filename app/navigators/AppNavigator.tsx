@@ -218,16 +218,22 @@ const AppStack = observer(function AppStack() {
     const updates = ["patients", "appointments", "events", "prescriptions"].map(async (tbl) => {
       // local update
       const q = await database.get(tbl).query()
-      return q.map(async (p) => await p.update())
+
+      // write information to database
+      await database.write(async (w) => {
+        const outs = q.map((s) => s.prepareUpdate())
+        await w.batch(...outs)
+      })
     })
 
     Toast.show("Waiting for changes to be pushed")
     Promise.all(updates)
-      .then(() => {
+      .then((o) => {
         Toast.show("Success!")
       })
-      .catch(() => {
+      .catch((err) => {
         Toast.show("Failed!")
+        console.error(err)
       })
   }
 
