@@ -188,14 +188,8 @@ const AppStack = observer(function AppStack() {
 
     const updates = ["patients", "appointments", "events", "prescriptions"].map(async (tbl) => {
       // local update
-      const post = await database.get(tbl).query()
-
-      return post.map(
-        async (p) =>
-          await p.update((row) => {
-            row.is_deleted = row.is_deleted
-          }),
-      )
+      const q = await database.get(tbl).query()
+      return q.map(async (p) => await p.update())
     })
 
     Toast.show("Waiting for changes to be pushed")
