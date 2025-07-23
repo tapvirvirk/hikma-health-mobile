@@ -89,6 +89,7 @@ export const EventListItem = enhanceEvent(function EventListItem(props: EventLis
  */
 export const getDiagnosesFromFormData = (formData: FormDataItem[]): Array<ICDEntry> => {
   const diagnoses = formData.filter((field) => field.fieldType === "diagnosis")
+  // @ts-ignore
   const diagnosesWithCodes = diagnoses.map((diagnosis) => {
     const { value } = diagnosis
     if (Array.isArray(value) && value.length > 0) {
@@ -157,7 +158,7 @@ const getEventDisplay = (event: EventModel, language: string): JSX.Element => {
               </View>
             </If>
             <If condition={fieldType !== "diagnosis" && inputType !== "input-group"}>
-              <Text text={value} />
+              <Text text={String(value)} />
             </If>
           </View>
         )

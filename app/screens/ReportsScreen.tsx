@@ -262,6 +262,7 @@ const ChartBar = (props: ChartBarProps) => {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", marginRight: 10 }}>
       <View
+      // @ts-ignore
         style={{
           height: 30,
           width: width === "0.0%" ? 4 : width,

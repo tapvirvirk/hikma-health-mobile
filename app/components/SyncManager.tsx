@@ -27,7 +27,7 @@ const addReceivedPatientId = async (patientId: string) => {
   console.log("SSSS: Adding received patient ID", patientId)
   try {
     const existingIds = await AsyncStorage.getItem(RECEIVED_PATIENTS_KEY)
-    let receivedIds = []
+    let receivedIds: Array<{ id: string; timestamp: number }> = []
 
     // Safely parse the JSON, handling potential parsing errors
     try {
@@ -40,10 +40,8 @@ const addReceivedPatientId = async (patientId: string) => {
 
     console.log("SSSS: Received IDs", receivedIds)
 
-    // Check if the patient ID already exists in the list (handling both old and new formats)
-    const patientExists = receivedIds.some((entry) =>
-      typeof entry === "object" ? entry.id === patientId : entry === patientId,
-    )
+    // Check if the patient ID already exists in the list
+    const patientExists = receivedIds.some((entry) => entry.id === patientId)
 
     if (!patientExists) {
       // Store the patient ID along with a timestamp
@@ -76,7 +74,7 @@ const isReceivedPatient = async (patientId: string): Promise<boolean> => {
     const existingIds = await AsyncStorage.getItem(RECEIVED_PATIENTS_KEY)
     if (!existingIds) return false
 
-    let receivedIds = []
+    let receivedIds: Array<{ id: string; timestamp: number } | string> = []
 
     // Safely parse the JSON, handling potential parsing errors
     try {
@@ -104,7 +102,7 @@ const cleanupReceivedPatients = async () => {
     const existingIds = await AsyncStorage.getItem(RECEIVED_PATIENTS_KEY)
     if (!existingIds) return
 
-    let receivedIds = []
+    let receivedIds: Array<{ id: string; timestamp: number } | string> = []
 
     // Safely parse the JSON, handling potential parsing errors
     try {
@@ -122,7 +120,7 @@ const cleanupReceivedPatients = async () => {
     }
 
     const now = Date.now()
-    let updatedList = []
+    let updatedList: Array<{ id: string; timestamp: number }> = []
 
     // Handle both old format (string[]) and new format (object[])
     for (const entry of receivedIds) {
@@ -132,7 +130,7 @@ const cleanupReceivedPatients = async () => {
           id: entry,
           timestamp: now, // We don't know when it was added, so use current time
         })
-      } else if (typeof entry === "object" && entry !== null && entry.id) {
+      } else if (typeof entry === "object" && entry !== null && "id" in entry && "timestamp" in entry) {
         // Keep only non-stale entries
         if (now - entry.timestamp < PATIENT_ID_EXPIRY_TIME) {
           updatedList.push(entry)
@@ -158,7 +156,7 @@ const removeReceivedPatientId = async (patientId: string) => {
     const existingIds = await AsyncStorage.getItem(RECEIVED_PATIENTS_KEY)
     if (!existingIds) return
 
-    let receivedIds = []
+    let receivedIds: Array<{ id: string; timestamp: number } | string> = []
 
     // Safely parse the JSON, handling potential parsing errors
     try {
@@ -174,9 +172,14 @@ const removeReceivedPatientId = async (patientId: string) => {
     }
 
     // Filter out the specified patient ID (handling both old and new formats)
-    const updatedList = receivedIds.filter((entry) => {
-      const id = typeof entry === "object" && entry !== null ? entry.id : entry
-      return id !== patientId
+    const updatedList: Array<{ id: string; timestamp: number } | string> = receivedIds.filter((entry) => {
+      if (typeof entry === "string") {
+        return entry !== patientId
+      }
+      if (typeof entry === "object" && entry !== null && "id" in entry) {
+        return entry.id !== patientId
+      }
+      return false
     })
 
     // Only update storage if something changed
@@ -615,13 +618,13 @@ const P2PSyncManager = observer(function P2PSyncManager(props: SyncManagerProps)
             "There are more than one registration form. Are you supporting multiple forms?",
           )
         }
-        const patientRegistrationForm: RegistrationFormModel | null = res[0]
+        const patientRegistrationForm = res[0]
           ? {
               ...res[0],
               fields: res[0].fields.filter((field) => !field.deleted && field.visible),
             }
           : null
-        setRegistrationForm(patientRegistrationForm)
+        setRegistrationForm(patientRegistrationForm as RegistrationFormModel | null)
         setIsLoadingRegistrationForm(false)
       })
 

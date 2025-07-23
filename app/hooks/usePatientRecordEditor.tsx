@@ -80,13 +80,13 @@ export function usePatientRecordEditor(
             "There are more than one registration form. Are you supporting multiple forms?",
           )
         }
-        const patientRegistrationForm: RegistrationFormModel | null = res[0]
-          ? {
-              ...res[0],
-              fields: res[0].fields.filter((field) => !field.deleted && field.visible),
-            }
-          : null
-        setRegistrationForm(patientRegistrationForm)
+        if (res[0]) {
+          const form = res[0]
+          form.fields = form.fields.filter((field) => !field.deleted && field.visible)
+          setRegistrationForm(form)
+        } else {
+          setRegistrationForm(null)
+        }
       })
 
     return () => {

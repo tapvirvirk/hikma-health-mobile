@@ -42,7 +42,7 @@ export default class EventModel extends Model {
   @json("form_data", sanitizeFormData) formData!: FormDataItem[]
   @json("metadata", sanitizeMetadata) metadata!: Record<string, any>
   @field("is_deleted") isDeleted!: boolean
-  @date("deleted_at") deletedAt!: Date
+  @date("deleted_at") deletedAt?: Date
   @readonly @date("created_at") createdAt!: Date
   @readonly @date("updated_at") updatedAt!: Date
 

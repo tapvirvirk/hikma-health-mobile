@@ -1,4 +1,16 @@
 const en = {
+  welcomeScreen: {
+    postscript: "psst — This probably isn't what your app looks like. (Unless your designer handed you these screens, in which case, ship it!)",
+    readyForLaunch: "Your app, almost ready for launch!",
+    exciting: "(ohh, this is exciting!)",
+  },
+  emptyStateComponent: {
+    generic: {
+      heading: "So empty... so sad",
+      content: "No data found at the moment. Try clicking the button to refresh or reload the app.",
+      button: "Let's try this again",
+    },
+  },
   login: {
     signIn: "Sign In",
     email: "Email Address",
@@ -307,3 +319,17 @@ const en = {
 
 export default en
 export type Translations = typeof en
+
+export type WelcomeScreen = {
+  postscript: string
+  readyForLaunch: string
+  exciting: string
+}
+
+export type EmptyStateComponent = {
+  generic: {
+    heading: string
+    content: string
+    button: string
+  }
+}

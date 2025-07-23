@@ -84,7 +84,7 @@ export type AppStackParamList = {
     formId: string
     visitId: string | null
     eventId: string | null
-    appointmentId: string | null // passed if the event is part of an appointment
+    appointmentId?: string | null // passed if the event is part of an appointment
     visitDate: number // timestamp
   }
   PatientVisitsList: {
@@ -153,7 +153,7 @@ const AppStack = observer(function AppStack() {
 
     const hasLocalChangesToPush = await hasUnsyncedChanges({ database })
 
-    Toast.show(translate("syncingStarted"), {
+    Toast.show(translate("common:syncingStarted"), {
       position: Toast.positions.BOTTOM,
       containerStyle: {
         marginBottom: 100,

@@ -103,6 +103,7 @@ export const PatientRegistrationFormScreen: FC<PatientRegistrationFormScreenProp
                 patientId: res.id,
                 visitDate: new Date().getTime(),
                 visitId: null,
+                appointmentId: null,
               })
             },
           },

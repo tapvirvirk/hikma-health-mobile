@@ -89,25 +89,25 @@ export const View = observer(function View(props: ViewProps) {
     alignItems,
     ...rest
   } = props
-  const $styles = [
+  const $styles: StyleProp<ViewStyle> = [
     $container,
     style,
-    gap && { gap },
+    gap !== undefined && { gap },
     direction && { flexDirection: direction },
-    flex && { flex },
+    flex !== undefined && { flex },
     justifyContent && { justifyContent },
     alignItems && { alignItems },
-    mt && { marginTop: mt },
-    mb && { marginBottom: mb },
-    my && { marginVertical: my },
-    pt && { paddingTop: pt },
-    pb && { paddingBottom: pb },
-    pl && { paddingLeft: pl },
-    pr && { paddingRight: pr },
-    py && { paddingVertical: py },
-    px && { paddingHorizontal: px },
-    p && { padding: p },
-  ]
+    mt !== undefined && { marginTop: mt },
+    mb !== undefined && { marginBottom: mb },
+    my !== undefined && { marginVertical: my },
+    pt !== undefined && { paddingTop: pt },
+    pb !== undefined && { paddingBottom: pb },
+    pl !== undefined && { paddingLeft: pl },
+    pr !== undefined && { paddingRight: pr },
+    py !== undefined && { paddingVertical: py },
+    px !== undefined && { paddingHorizontal: px },
+    p !== undefined && { padding: p },
+  ].filter((style): style is ViewStyle => style !== false && style !== null && style !== undefined)
 
   return (
     <RNView style={$styles} {...rest}>

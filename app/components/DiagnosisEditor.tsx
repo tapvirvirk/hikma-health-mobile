@@ -61,7 +61,7 @@ export const DiagnosisEditor = observer(function DiagnosisEditor(props: Diagnosi
     setSelectedDiagnoses((sd) => sd.filter((d) => d.code !== code))
   }
 
-  const removeSelected = (result: ICDEntry) => {
+  const removeSelected = (result: SearchResult) => {
     return !selectedDiagnoses.find((d) => d.code === result.code)
   }
 

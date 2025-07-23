@@ -128,9 +128,11 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
     if (form && formState) {
       formState.formData.map((field) => {
         if (field.fieldType === "diagnosis") {
-          setDiagnoses(field?.value || [])
+          setDiagnoses((field?.value as ICDEntry[]) || [])
         } else if (field.fieldType === "medicine") {
-          setMedicines(field?.value || [])
+          if (Array.isArray(field?.value)) {
+            setMedicines(field.value as MedicationEntry[])
+          }
         }
         setValue(field.name, field.value)
       })
@@ -240,14 +242,17 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
       })
     }
 
-    const newEvent: EventModel = {
-      formId,
-      visitId,
-      eventType: form?.name || "",
-      patientId,
-      formData,
-      visitDate,
-    }
+    // Create event data matching the expected type
+    const newEvent = database.collections
+      .get<EventModel>("events")
+      .prepareCreate((event: any) => {
+        event.formId = formId
+        event.visitId = visitId || ""
+        event.eventType = form?.name || ""
+        event.patientId = patientId
+        event.formData = formData
+        event.visitDate = visitDate
+      })
 
     try {
       const res = await api.createEvent(
@@ -455,12 +460,12 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
       // Update form control value
       console.log(`Setting form value for ${fieldName} to ${responseData.id}`)
       setValue(fieldName as never, responseData.id as never)
-    } catch (error) {
+    } catch (error: any) {
       console.error("File upload error:", error)
       Sentry.captureException(error)
 
       // Update state with error
-      console.log(`Updating state for failed upload: ${error.message}`)
+      console.log(`Updating state for failed upload: ${error?.message}`)
       setFileUploads((prev) => ({
         ...prev,
         [fieldName]: {
@@ -529,55 +534,102 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
                 <If condition={field.inputType === "select" && field.fieldType !== "diagnosis"}>
                   <View style={{}}>
                     <Text text={field.name} preset="formLabel" />
-                    <DropDownPicker
-                      open={isOpen(field.id)}
-                      // value={multiPickerValue(getValues(field.name) as any, field.multi || false)}
-                      value={multiPickerValue(watch(field.name) as any, field.multi || false)}
-                      searchable
-                      closeAfterSelecting
-                      style={{
-                        marginTop: 4,
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        backgroundColor: colors.palette.neutral200,
-                        borderColor: colors.palette.neutral400,
-                        zIndex: 990000,
-                        flex: 1,
-                      }}
-                      modalTitle={field.name}
-                      multiple={field.multi || false}
-                      modalContentContainerStyle={{
-                        marginTop: 4,
-                        borderWidth: 1,
-                        borderRadius: 4,
-                        backgroundColor: colors.palette.neutral200,
-                        borderColor: colors.palette.neutral400,
-                        zIndex: 990000,
-                        flex: 1,
-                      }}
-                      mode="BADGE"
-                      searchPlaceholder={
-                        translate("common:search", { defaultValue: "Search" }) + "..."
-                      }
-                      searchTextInputStyle={$inputWrapperStyle}
-                      closeOnBackPressed
-                      onClose={closeDialogue}
-                      items={_.sortBy(field.options, ["label"])}
-                      setOpen={openDialogue(field.id)}
-                      listMode="MODAL"
-                      // setValue={onChange}
-                      setValue={(callback) => {
-                        const pickerValue = multiPickerValue(
-                          getValues(field.name) as any,
-                          field.multi || false,
-                        )
-                        const data = callback(pickerValue || "")
-
-                        const newValue = field.multi && Array.isArray(data) ? data.join("; ") : data
-
-                        setValue(field.name as never, newValue as never)
-                      }}
-                    />
+                    {field.multi === true ? (
+                      <DropDownPicker
+                        open={isOpen(field.id)}
+                        value={multiPickerValue(watch(field.name) as any, true) as string[]}
+                        searchable
+                        closeAfterSelecting
+                        style={{
+                          marginTop: 4,
+                          borderWidth: 1,
+                          borderRadius: 4,
+                          backgroundColor: colors.palette.neutral200,
+                          borderColor: colors.palette.neutral400,
+                          zIndex: 990000,
+                          flex: 1,
+                        }}
+                        modalTitle={field.name}
+                        multiple={true}
+                        modalContentContainerStyle={{
+                          marginTop: 4,
+                          borderWidth: 1,
+                          borderRadius: 4,
+                          backgroundColor: colors.palette.neutral200,
+                          borderColor: colors.palette.neutral400,
+                          zIndex: 990000,
+                          flex: 1,
+                        }}
+                        mode="BADGE"
+                        searchPlaceholder={
+                          translate("common:search", { defaultValue: "Search" }) + "..."
+                        }
+                        searchTextInputStyle={$inputWrapperStyle}
+                        closeOnBackPressed
+                        onClose={closeDialogue}
+                        items={_.sortBy(field.options, ["label"]).map(option => ({
+                          label: option.label,
+                          value: option.value
+                        }))}
+                        setOpen={openDialogue(field.id)}
+                        listMode="MODAL"
+                        setValue={(callback) => {
+                          const pickerValue = multiPickerValue(
+                            getValues(field.name) as any,
+                            true,
+                          ) as string[]
+                          const data = callback(pickerValue)
+                          setValue(field.name as never, (data as string[]).join("; ") as never)
+                        }}
+                      />
+                    ) : (
+                      <DropDownPicker
+                        open={isOpen(field.id)}
+                        value={multiPickerValue(watch(field.name) as any, false) as string}
+                        searchable
+                        closeAfterSelecting
+                        style={{
+                          marginTop: 4,
+                          borderWidth: 1,
+                          borderRadius: 4,
+                          backgroundColor: colors.palette.neutral200,
+                          borderColor: colors.palette.neutral400,
+                          zIndex: 990000,
+                          flex: 1,
+                        }}
+                        modalTitle={field.name}
+                        modalContentContainerStyle={{
+                          marginTop: 4,
+                          borderWidth: 1,
+                          borderRadius: 4,
+                          backgroundColor: colors.palette.neutral200,
+                          borderColor: colors.palette.neutral400,
+                          zIndex: 990000,
+                          flex: 1,
+                        }}
+                        mode="BADGE"
+                        searchPlaceholder={
+                          translate("common:search", { defaultValue: "Search" }) + "..."
+                        }
+                        searchTextInputStyle={$inputWrapperStyle}
+                        closeOnBackPressed
+                        onClose={closeDialogue}
+                        items={_.sortBy(field.options, ["label"]).map(option => ({
+                          label: option.label,
+                          value: option.value
+                        }))}
+                        setOpen={openDialogue(field.id)}
+                        listMode="MODAL"
+                        setValue={(callback) => {
+                          const pickerValue = multiPickerValue(
+                            getValues(field.name) as any,
+                            false,
+                          ) as string
+                          const data = callback(pickerValue)
+                          setValue(field.name as never, data as never)
+                        }}
+                      />
+                    )}
                   </View>
                 </If>
 
@@ -761,7 +813,7 @@ export const EventFormScreen: FC<EventFormScreenProps> = observer(function Event
         <BottomSheetScrollView style={{}}>
           <If condition={modalState.activeModal === "medication"}>
             <MedicationEditor
-              medication={modalState.medication as MedicationEntry}
+              medication={modalState.activeModal === "medication" ? modalState.medication : undefined}
               medicineOptions={medicineOptions}
               onSubmit={updateMedication}
             />
@@ -914,10 +966,10 @@ function useEventForm(
   return {
     form: form,
     isLoading,
-    // fields: form?.formFields ?? [],
+    fields: form?.formFields ?? [],
     state: formState,
-    // getFieldValue: getFieldValue,
-    // setFieldValue,
+    getFieldValue,
+    setFieldValue
   }
 }
 

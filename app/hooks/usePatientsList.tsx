@@ -64,7 +64,7 @@ export function usePatientsList(
     const { query, yearOfBirth, sex } = debouncedSearchFilter
     const ref = database.get<PatientModel>("patients")
     setIsLoading(true)
-    const queryConditions = []
+    const queryConditions: Q.Where[] = []
     if (query.length > 1) {
       queryConditions.push(
         Q.or(
@@ -221,7 +221,7 @@ export function usePatientsList(
     const patientQueryConditions = baseFields.map((field) => {
       let val = field.value
       if (field.fieldType === "number") {
-        val = isNaN(+field.value) ? field.value : +field.value
+        val = isNaN(+field.value) ? field.value : String(+field.value)
       } else if (field.fieldType === "date") {
         // FIXME: how do we deal with dates?
         val = field.value
@@ -246,7 +246,7 @@ export function usePatientsList(
       let val = field.value
       let col: PatientValueColumn = "string_value"
       if (field.fieldType === "number") {
-        val = isNaN(+field.value) ? field.value : +field.value
+        val = isNaN(+field.value) ? field.value : String(+field.value)
         col = "number_value"
       } else if (field.fieldType === "date") {
         // FIXME: how do we deal with dates?
@@ -268,7 +268,7 @@ export function usePatientsList(
       return Q.where(col, Q.like(likeQuery))
     })
 
-    let ptQueryConditionsWithStr = []
+    let ptQueryConditionsWithStr: Q.Where[] = []
     if (searchFilter.query.length > 1) {
       const query = searchFilter.query
       ptQueryConditionsWithStr = [
@@ -285,7 +285,7 @@ export function usePatientsList(
     }
 
     // If the user is doing any kind of search, sort by given name and last name, otherwise show most recent first
-    let ptQueryConditions = []
+    let ptQueryConditions: Q.SortBy[] = []
     if (ptQueryConditionsWithStr.length > 0) {
       ptQueryConditions.push(Q.sortBy("given_name", "asc"))
       ptQueryConditions.push(Q.sortBy("surname", "asc"))

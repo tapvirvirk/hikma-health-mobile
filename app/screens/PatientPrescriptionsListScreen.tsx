@@ -93,7 +93,7 @@ export const PatientPrescriptionsListScreen: FC<PatientPrescriptionsListScreenPr
           navigation,
           patientId,
           prescription.visitId || "",
-          prescription.createdAt,
+          prescription.createdAt.getTime(),
           provider,
         ),
       [navigation, patientId, provider],
@@ -162,7 +162,7 @@ export const PatientPrescriptionsListScreen: FC<PatientPrescriptionsListScreenPr
                 navigation,
                 patientId,
                 item.visitId || "",
-                item.createdAt,
+                item.createdAt.getTime(),
                 provider,
               )
             }

@@ -22,7 +22,10 @@ Sentry.init({
 SplashScreen.preventAutoHideAsync()
 
 function IgniteApp() {
-  return <App hideSplashScreen={SplashScreen.hideAsync} />
+  return <App hideSplashScreen={async () => {
+    await SplashScreen.hideAsync()
+    return true
+  }} />
 }
 
 export default Sentry.wrap(IgniteApp)

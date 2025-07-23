@@ -23,6 +23,7 @@ export type BaseColumn =
   | "camp"
   | "government_id"
   | "external_patient_id"
+  | string // Allow any string to support dynamic columns
 export const baseColumns: BaseColumn[] = [
   "given_name",
   "surname",

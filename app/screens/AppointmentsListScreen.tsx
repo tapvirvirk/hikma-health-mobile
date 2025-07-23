@@ -362,7 +362,7 @@ export const AppointmentsListScreen: FC<AppointmentsListScreenProps> = observer(
           </View>
         }
         ListEmptyComponent={
-          <View justifyContent="center" px={10} alignItems="center" pt={"40%"}>
+          <View justifyContent="center" px={10} alignItems="center" pt={40}>
             <LucideListTodo size={120} color={colors.textDim} />
             <Text text="No appointments found" size="xl" />
           </View>
@@ -436,7 +436,7 @@ const AppointmentListItem = enhance(
     patient: PatientModel | null | undefined
     clinic: ClinicModel | null | undefined
   }) => {
-    const navigation = useNavigation()
+    const navigation = useNavigation<AppStackScreenProps<"AppointmentsList">["navigation"]>()
     return (
       <Pressable
         onPress={() => {

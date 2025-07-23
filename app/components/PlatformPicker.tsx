@@ -15,7 +15,7 @@ type BaseProps = {
 
 type IOSProps = BaseProps & {
   isOpen: boolean
-  setOpen: (open: boolean) => void
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 type Props = BaseProps | IOSProps

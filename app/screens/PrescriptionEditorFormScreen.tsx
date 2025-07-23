@@ -499,7 +499,7 @@ const convertMedicationToPrescription = (
  * @returns
  */
 const convertPrescriptionToMedication = (prescriptionItem: PrescriptionItem): MedicationEntry => {
-  const { medicationId, quantity, status, notes, filledAt, filledByUserId, ...medicationFields } =
+  const { medicationId, quantity, status, filledAt, filledByUserId, ...medicationFields } =
     prescriptionItem
 
   return {

@@ -80,7 +80,7 @@ export const PatientVisitsListScreen: FC<PatientVisitsListScreenProps> = observe
     }
 
     const renderItem = ({ item }: { item: VisitModel }) => (
-      <PatientVisitItem visit={item} onPress={onVisitPress} onDelete={onDeleteVisit} />
+      <PatientVisitItem visit={item} clinic={item.clinic} onPress={onVisitPress} onDelete={onDeleteVisit} />
     )
 
     if (patientVisits.length === 0) {

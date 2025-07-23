@@ -88,6 +88,7 @@ export const PatientViewScreen: FC<PatientViewScreenProps> = observer(function P
       patientId,
       visitId: null,
       visitDate: Date.now(),
+      appointmentId: null,
     })
   }
 
@@ -99,24 +100,28 @@ export const PatientViewScreen: FC<PatientViewScreenProps> = observer(function P
     const latestSummaryEvent = await api.getLatestPatientEventByType(patientId, "Patient Summary")
     const latestVitalsEvent = await api.getLatestPatientEventByType(patientId, "Vitals")
 
-    var height = translate("common:noContent")
-    var weight = translate("common:noContent")
+    let height = translate("common:noContent")
+    let weight = translate("common:noContent")
 
     if (latestVitalsEvent && Object.keys(latestVitalsEvent).length > 0) {
       const vitalsTaken = Object.keys(latestVitalsEvent)
 
       vitalsTaken.forEach((vital) => {
         if (vital.toLowerCase().includes("weight")) {
-          weight = latestVitalsEvent[vital as any]
+          weight = String(latestVitalsEvent[vital as any].value)
         } else if (vital.toLowerCase().includes("height")) {
-          height = latestVitalsEvent[vital as any]
+          height = String(latestVitalsEvent[vital as any].value)
         }
       })
     }
 
+    const summary = latestSummaryEvent && Array.isArray(latestSummaryEvent) && latestSummaryEvent.length > 0
+      ? String(latestSummaryEvent[0].value)
+      : translate("common:noContent")
+
     printHTML({
       patient,
-      summary: latestSummaryEvent ? latestSummaryEvent.summary : translate("common:noContent"),
+      summary,
       anthropometrics: { height, weight },
       history: visitEvents,
       language: translate("common:languageCode"),

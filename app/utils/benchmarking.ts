@@ -44,7 +44,7 @@ export function generateDummyPatients(
       givenName: faker.person.firstName(),
       surname: faker.person.lastName(),
       dateOfBirth: format(
-        faker.date.birthdate({ min: 1960, max: new Date().getFullYear() }),
+        faker.date.birthdate({ mode: 'year', min: 1960, max: new Date().getFullYear() }),
         "yyyy-MM-dd",
       ),
       phone: faker.phone.number(),
@@ -85,7 +85,9 @@ export function generateDummyPatients(
       }
     }) as unknown as EventModel[]
 
-    result.push({ patient, visits, events })
+    const patientAdditionalAttributes: PatientAdditionalAttribute[] = []
+
+    result.push({ patient, patientAdditionalAttributes, visits, events })
   }
 
   return result

@@ -42,6 +42,7 @@ export const FormEventsListScreen: FC<FormEventsListScreenProps> = observer(
                 visitDate: new Date().getTime(), // Actually not needed when editing an event already attached to a visit.
                 formId: event.formId,
                 eventId: event.id,
+                // appointmentId: null,
               })
             },
           },

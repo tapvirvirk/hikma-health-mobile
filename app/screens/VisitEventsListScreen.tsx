@@ -321,13 +321,15 @@ const enhancePrescription = withObservables(["prescription"], ({ prescription })
 export const PrescriptionListItem = enhancePrescription(
   ({ prescription, openPrescriptionPage, language, clinic }: PrescriptionListItemProps) => {
     console.log("prescription", prescription.pickupClinicId, clinic?.name)
-    database
-      .get<ClinicModel>("clinics")
-      .query(Q.where("id", prescription.pickupClinicId))
-      .fetch()
-      .then((res) => {
-        console.log(res[0]?.name, res[0]?.id)
-      })
+    if (prescription.pickupClinicId) {
+      database
+        .get<ClinicModel>("clinics")
+        .query(Q.where("id", prescription.pickupClinicId))
+        .fetch()
+        .then((res) => {
+          console.log(res[0]?.name, res[0]?.id)
+        })
+    }
     return (
       <View>
         <Pressable testID="prescriptionListItem" onPress={openPrescriptionPage} style={{}}>

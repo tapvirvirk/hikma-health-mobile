@@ -196,7 +196,7 @@ export async function applyRemoteChanges(
               })
               recordsToCreate.push(preparedUpdate)
               // if the local record is not newer, than remote record, mark as not to be updated;
-              if (existingRecord._raw.updated_at <= sanitized.updated_at) {
+              if ((existingRecord._raw as any).updated_at <= (sanitized as any).updated_at) {
                 idsNotToPush.push(sanitized.id)
               }
             } else {
@@ -236,7 +236,7 @@ export async function applyRemoteChanges(
               })
 
               // if the local record is not newer, than remote record, mark as not to be updated;
-              if (existingRecord._raw.updated_at <= sanitized.updated_at) {
+              if ((existingRecord._raw as any).updated_at <= (sanitized as any).updated_at) {
                 idsNotToPush.push(sanitized.id)
               }
               // console.log("Sanitized record: ", sanitized)
@@ -380,16 +380,16 @@ async function getTableChangesSince(
 
     // Separate records into created and updated
     const created = updatedRecords
-      .filter((record) => record._raw.created_at >= timestamp)
+      .filter((record) => (record._raw as any).created_at >= timestamp)
       .map((record) => record._raw)
 
     const updated = updatedRecords
-      .filter((record) => record._raw.created_at < timestamp && record._raw.updated_at >= timestamp)
+      .filter((record) => (record._raw as any).created_at < timestamp && (record._raw as any).updated_at >= timestamp)
       .map((record) => record._raw)
 
     console.log(
       "Updated times: ",
-      updatedRecords.map((record) => record._raw.updated_at),
+      updatedRecords.map((record) => (record._raw as any).updated_at),
     )
 
     // Map deleted records

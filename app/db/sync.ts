@@ -147,6 +147,7 @@ export function updateDates(changes: SyncDatabaseChangeSet) {
     for (const action of changeType) {
       if (changes[type][action]) {
         changes[type][action].forEach((record) => {
+          if (typeof record === 'string') return
           record.created_at = new Date(record.created_at || defaultDate).getTime()
           record.updated_at = new Date(record.updated_at || defaultDate).getTime()
           if (record.deleted_at) {

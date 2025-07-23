@@ -117,6 +117,7 @@ export const PatientRecordEditorScreen: FC<PatientRecordEditorScreenProps> = obs
                   patientId: redirectPatientId,
                   visitDate: new Date().getTime(),
                   visitId: null,
+                  appointmentId: null,
                 })
               },
             },

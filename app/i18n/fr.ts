@@ -1,31 +1,39 @@
-import { Translations } from "./en"
-
-const fr: Translations = {
-  common: {
-    ok: "OK !",
-    cancel: "Annuler",
-    back: "Retour",
-  },
+const fr = {
   welcomeScreen: {
-    postscript:
-      "psst  — Ce n'est probablement pas à quoi ressemble votre application. (À moins que votre designer ne vous ait donné ces écrans, dans ce cas, mettez la en prod !)",
+    postscript: "Ce n'est probablement pas à quoi ressemble votre application. (Sauf si votre designer vous a remis ces écrans, dans ce cas, lancez-la !)",
     readyForLaunch: "Votre application, presque prête pour le lancement !",
-    exciting: "(ohh, c'est excitant !)",
-  },
-  errorScreen: {
-    title: "Quelque chose s'est mal passé !",
-    friendlySubtitle:
-      "C'est l'écran que vos utilisateurs verront en production lorsqu'une erreur sera lancée. Vous voudrez personnaliser ce message (situé dans `app/i18n/fr.ts`) et probablement aussi la mise en page (`app/screens/ErrorScreen`). Si vous voulez le supprimer complètement, vérifiez `app/app.tsx` pour le composant <ErrorBoundary>.",
-    reset: "RÉINITIALISER L'APPLICATION",
+    exciting: "(oh, c'est excitant !)",
   },
   emptyStateComponent: {
     generic: {
       heading: "Si vide... si triste",
-      content:
-        "Aucune donnée trouvée pour le moment. Essayez de cliquer sur le bouton pour rafraîchir ou recharger l'application.",
+      content: "Aucune donnée trouvée pour le moment. Essayez de cliquer sur le bouton pour actualiser ou recharger l'application.",
       button: "Essayons à nouveau",
     },
+  },
+  patientView: {
+    newVisit: "Nouvelle Visite",
+  },
+  newVisit: {
+    newVisit: "Nouvelle Visite",
+    completeVisit: "Terminer la Visite",
+  },
+  newPatient: {
+    newPatient: "Nouveau Patient",
+    updatePatient: "Mettre à jour le Patient",
+    continueToVisits: "Continuer vers les Visites",
+    invalidPatientId: "Tentative d'ouverture d'un dossier patient avec un identifiant invalide",
+    similarFoundPatients: "Patients Existants Similaires",
+    govtIdExists: "Identifiant gouvernemental déjà enregistré",
+    errorSaving: "Une erreur s'est produite lors de l'enregistrement du dossier patient",
+    successfulSave: "Dossier patient enregistré avec succès",
+    done: "Terminé",
+  },
+  summaryStats: {
+    summaryStats: "Statistiques Résumées",
+    ageSexBreakdown: "Répartition par Âge et Sexe",
   },
 }
 
 export default fr
+export type Translations = typeof fr

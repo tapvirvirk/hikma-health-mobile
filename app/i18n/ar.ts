@@ -1,5 +1,17 @@
 import type { Translations as ENTranslations } from "./en"
 const ar: ENTranslations = {
+  welcomeScreen: {
+    postscript: "ربما لا يبدو تطبيقك هكذا. (ما لم يكن المصمم قد سلمك هذه الشاشات، وفي هذه الحالة، قم بنشره!)",
+    readyForLaunch: "تطبيقك، على وشك الإطلاق!",
+    exciting: "(يا له من أمر مثير!)",
+  },
+  emptyStateComponent: {
+    generic: {
+      heading: "فارغ جدًا... حزين جدًا",
+      content: "لم يتم العثور على بيانات في الوقت الحالي. حاول النقر على الزر للتحديث أو إعادة تحميل التطبيق.",
+      button: "دعنا نحاول مرة أخرى",
+    },
+  },
   login: {
     signIn: "تسجيل الدخول",
     email: "البريد الإلكتروني",
@@ -117,6 +129,7 @@ const ar: ENTranslations = {
     signOutDescription: "سيتم تسجيل الخروج من حسابك.",
     privacyPolicy: "سياسة الخصوصية",
     checkOTAForUpdates: "التحقق من التحديثات السريعة",
+    syncSettings: ""
   },
   errorScreen: {
     title: "حدث خطأ في التطبيق.",
@@ -143,6 +156,12 @@ const ar: ENTranslations = {
   patientReport: {
     patientMedicalRecord: "السجل الطبي للمريض",
     PatientInformation: "معلومات المريض",
+  },
+  syncSettingsScreen: {
+    title: "إعدادات المزامنة",
+    confirmSetDefault: "تأكيد تعيين الافتراضي",
+    confirmSetDefaultDescription: "هل أنت متأكد أنك تريد تعيين هذا الخادم كافتراضي؟",
+    syncError: "خطأ في المزامنة",
   },
   common: {
     chooseLanguage: "اختر اللغة",

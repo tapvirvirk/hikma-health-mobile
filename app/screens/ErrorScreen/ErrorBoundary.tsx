@@ -65,7 +65,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <Sentry.ErrorBoundary
         fallback={({ error, resetError, componentStack }) => (
-          <ErrorDetails onReset={resetError} error={error} errorInfo={{ componentStack }} />
+          <ErrorDetails onReset={resetError} error={error as Error} errorInfo={{ componentStack }} />
         )}
       >
         {this.props.children}

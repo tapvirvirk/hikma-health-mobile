@@ -1,6 +1,6 @@
 import React from "react"
 import { Image, ImageProps, ImageStyle, StyleProp, TextStyle, View, ViewStyle } from "react-native"
-import { translate } from "../i18n"
+import { translate, TxKeyPath } from "../i18n"
 import { spacing } from "../theme"
 import { Button, ButtonProps } from "./Button"
 import { Text, TextProps } from "./Text"
@@ -111,9 +111,9 @@ interface EmptyStatePresetItem {
 const EmptyStatePresets = {
   generic: {
     imageSource: sadFace,
-    heading: translate("emptyStateComponent.generic.heading"),
-    content: translate("emptyStateComponent.generic.content"),
-    button: translate("emptyStateComponent.generic.button"),
+    heading: "emptyStateComponent.generic.heading",
+    content: "emptyStateComponent.generic.content",
+    button: "emptyStateComponent.generic.button",
   } as EmptyStatePresetItem,
 } as const
 

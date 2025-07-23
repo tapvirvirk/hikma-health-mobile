@@ -76,7 +76,7 @@ export const AppointmentEditorFormScreen: FC<AppointmentEditorFormScreenProps> =
       defaultValues: {
         ...cloneDeep(defaultAppointment),
         userId: provider.id,
-        currentVisitId: visitId || null,
+        currentVisitId: visitId || undefined,
         clinicId: provider.clinic_id,
         patientId,
         reason: "other",
@@ -162,7 +162,7 @@ export const AppointmentEditorFormScreen: FC<AppointmentEditorFormScreenProps> =
                   fieldKey="clinicId"
                   modalTitle="Clinic"
                   setValue={() => (value: string) => field.onChange(value)}
-                  setOpen={(value: boolean) => setOpenPicker(value ? "clinic" : null)}
+                  setOpen={(value) => setOpenPicker(value ? "clinic" : null)}
                   isOpen={openPicker === "clinic"}
                   value={field.value}
                 />
@@ -227,9 +227,9 @@ export const AppointmentEditorFormScreen: FC<AppointmentEditorFormScreenProps> =
                   setValue={() => (value: string) => {
                     isNaN(Number(value)) ? field.onChange(0) : field.onChange(Number(value))
                   }}
-                  setOpen={(value: boolean) => setOpenPicker(value ? "duration" : null)}
+                  setOpen={(value) => setOpenPicker(value ? "duration" : null)}
                   isOpen={openPicker === "duration"}
-                  value={field.value}
+                  value={String(field.value)}
                   modalTitle="Duration"
                 />
                 {/* </View> */}
@@ -259,7 +259,7 @@ export const AppointmentEditorFormScreen: FC<AppointmentEditorFormScreenProps> =
                   setValue={() => (value: string) => {
                     field.onChange(value)
                   }}
-                  setOpen={(value: boolean) => setOpenPicker(value ? "reason" : null)}
+                  setOpen={(value) => setOpenPicker(value ? "reason" : null)}
                   isOpen={openPicker === "reason"}
                   value={field.value}
                 />

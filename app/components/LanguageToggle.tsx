@@ -27,7 +27,8 @@ export const LanguageToggle = observer(function LanguageToggle(props: LanguageTo
   const [open, setOpen] = useState(false)
   const { language } = useStores()
   const { style } = props
-  const $styles = [$container, style, isDarkMode ? { color: "#fff" } : { color: "#000" }]
+  const $styles = [$container, style]
+  const textColor = isDarkMode ? "#fff" : "#000"
 
   const setLanguage = (value: LanguageName) => {
     language.setLanguage(value)
@@ -47,12 +48,12 @@ export const LanguageToggle = observer(function LanguageToggle(props: LanguageTo
         <Picker
           selectedValue={language.current}
           onValueChange={setLanguage}
-          itemStyle={$pickerItemStyle}
+          itemStyle={[$pickerItemStyle, { color: textColor }]}
           style={[{ minWidth: 100 }, style]}
         >
-          <Picker.Item value="en-US" label="English" />
-          <Picker.Item value="es" label="Español" />
-          <Picker.Item value="ar" label="عربي" />
+          <Picker.Item value="en-US" label="English" color={textColor} />
+          <Picker.Item value="es" label="Español" color={textColor} />
+          <Picker.Item value="ar" label="عربي" color={textColor} />
         </Picker>
       </If>
       <If condition={isIos}>
@@ -65,7 +66,7 @@ export const LanguageToggle = observer(function LanguageToggle(props: LanguageTo
               ...$inputWrapperStyle,
               alignItems: "center",
             },
-            inputAndroid: { ...$inputStyle, width: "100%" },
+            inputAndroid: { ...$inputStyle, width: "100%", color: textColor },
             inputIOSContainer: {
               ...$inputWrapperStyle,
               alignItems: "center",
@@ -76,6 +77,7 @@ export const LanguageToggle = observer(function LanguageToggle(props: LanguageTo
             inputIOS: {
               ...$inputStyle,
               paddingRight: 30, // to ensure the text is never behind the icon
+              color: textColor,
             },
           }}
           items={[

@@ -455,7 +455,7 @@ export class Api {
       }
 
       const appointmentQuery = await database.get<AppointmentModel>("appointments").prepareCreate((newAppointment) => {
-        newAppointment.currentVisitId = appointmentVisitId
+        newAppointment.currentVisitId = appointmentVisitId || ""
         newAppointment.patientId = appointment.patientId
         newAppointment.providerId = appointment.providerId
         newAppointment.clinicId = appointment.clinicId

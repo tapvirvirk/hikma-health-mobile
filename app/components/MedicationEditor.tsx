@@ -3,7 +3,7 @@ import { Platform, Pressable, StyleProp, TextStyle, ViewStyle } from "react-nati
 import { observer } from "mobx-react-lite"
 import { colors, typography } from "../theme"
 import { Text } from "../components/Text"
-import { MapOrEntries, useMap } from "usehooks-ts"
+import { useMap } from "usehooks-ts"
 import { TextField } from "./TextField"
 import { Picker } from "@react-native-picker/picker"
 import { View } from "./View"
@@ -67,7 +67,7 @@ const getMedicationsListFilterSimple = (meds: string[]) => (query: string) => {
   return meds.filter((m) => m.toLowerCase().includes(query.toLowerCase()))
 }
 
-const initialValues: MapOrEntries<keyof MedicationEntry, string | number> = [
+const initialValues: Array<[keyof MedicationEntry, string | number]> = [
   ["id", ""],
   ["name", ""],
   ["route", "oral"],

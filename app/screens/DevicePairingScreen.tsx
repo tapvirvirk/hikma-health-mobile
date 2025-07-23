@@ -18,7 +18,7 @@ import { multiply, useP2PCommunication, getAllPairedDevices, createRouter } from
 import type { PairingInfo, Device, StorageLayer } from "rn-local-p2p"
 import QRCode from "react-native-qrcode-svg"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import type { CallbackWithResult } from "@react-native-async-storage/async-storage"
+// import type { CallbackWithResult } from "@react-native-async-storage/async-storage"
 import { colors } from "app/theme"
 import { RefreshCwIcon, TrashIcon, XIcon } from "lucide-react-native"
 import { useStores } from "app/models"
