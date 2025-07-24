@@ -1203,7 +1203,7 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNGestureHandler (2.22.1):
+  - RNGestureHandler (2.14.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1234,16 +1234,16 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNSentry (5.36.0):
+  - RNSentry (6.18.1):
     - glog
     - hermes-engine
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-hermes
-    - Sentry/HybridSDK (= 8.41.0)
+    - Sentry/HybridSDK (= 8.53.2)
   - RNSVG (15.11.1):
     - React-Core
-  - Sentry/HybridSDK (8.41.0)
+  - Sentry/HybridSDK (8.53.2)
   - simdjson (3.1.0-wmelon1)
   - SocketRocket (0.6.1)
   - SSZipArchive (2.5.5)
@@ -1575,7 +1575,7 @@ SPEC CHECKSUMS:
   hermes-engine: ed62e0dcd013bf4a3b487f164feec1c4e705b5b5
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  RCT-Folly: 7169b2b1c44399c76a47b5deaaba715eeeb476c0
+  RCT-Folly: cd21f1661364f975ae76b3308167ad66b09f53f5
   RCTRequired: d362a61864a64315aee00faea8dee6cf5b3f4aad
   RCTTypeSafety: 09baf60faeab02492dc8bf04ce5af1dda645b86d
   React: b87c7c7c12f8232bd7cfdc4a00bf687144c17e30
@@ -1625,12 +1625,12 @@ SPEC CHECKSUMS:
   RNCPicker: 43a6a73efbb33d71640146070cc1720f1f75f5d6
   RNDeviceInfo: 801c18d0525e86580900e7b5f562dca0c8c05021
   RNFlashList: acc8b5f413b16c09304d7bbd2fc9e51f6ee16f71
-  RNGestureHandler: cfb03b481860d1b4b8f125434731b28b533d2e53
+  RNGestureHandler: 4098d1ee27ae296b910f91804937af7af6d1aeb5
   RNReanimated: 88dfb3d4b761e093b5a794a893785e15f96db949
   RNScreens: 59f615aa0782077560c8eea46c2daec3a716dba9
-  RNSentry: 026daca5e69d063126b8e904fb6773ad3c29ddeb
+  RNSentry: 6b202f9fa874aa9977dcb729818145cb55c68b14
   RNSVG: f70944ff686a4fa2771cff9e81c9856a81738009
-  Sentry: 54d0fe6c0df448497c8ed4cce66ccf7027e1823e
+  Sentry: 59993bffde4a1ac297ba6d268dc4bbce068d7c1b
   simdjson: e6bfae9ce4bcdc80452d388d593816f1ca2106f3
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SSZipArchive: c69881e8ac5521f0e622291387add5f60f30f3c4

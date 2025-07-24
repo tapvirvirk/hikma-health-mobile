@@ -11,7 +11,9 @@
       },
       "ios": {
         "buildConfiguration": "Debug",
-        "simulator": true
+        "simulator": true,
+        "autoIncrement": true,
+        "image": "macos-sonoma-14.6-xcode-16.0"
       }
     },
     "development:device": {
@@ -32,7 +34,15 @@
       "extends": "preview",
       "ios": { "simulator": false }
     },
-    "production": {}
+    "production": {
+      "ios": {
+        "autoIncrement": true,
+        "image": "macos-sonoma-14.6-xcode-16.0"
+      },
+      "android": {
+        "autoIncrement": true
+      }
+    }
   },
   "submit": {
     "production": {}
